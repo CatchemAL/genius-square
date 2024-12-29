@@ -5,7 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Alex Cross", email = "AlexJCross90@gmail.com" }]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "tqdm>=4.67.1",
+]
 
 [project.scripts]
 genius-square = "genius_square:_cli.main"
@@ -21,3 +23,6 @@ build-backend = "maturin"
 
 [dependency-groups]
 dev = ["pytest>=8.3.4"]
+
+[tool.ruff]
+line-length = 110
