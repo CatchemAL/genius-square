@@ -11,7 +11,7 @@ dependencies = []
 genius-square = "genius_square:_cli.main"
 
 [tool.maturin]
-module-name = "genius_square._core"
+module-name = "genius_square.solver._solve"
 python-packages = ["genius_square"]
 python-source = "python"
 

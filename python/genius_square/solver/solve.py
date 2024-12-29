@@ -1,4 +1,4 @@
-from .._core import hello_from_bin
+from ._solve import hello_from_bin
 
 
 def solve() -> str:
