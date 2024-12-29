@@ -1,28 +1,23 @@
-[build-system]
-requires = ["maturin>=1.8,<2.0"]
-build-backend = "maturin"
-
 [project]
-name = "genius"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-]
-dynamic = ["version"]
-dependencies = [
-    "requests>=2.32.3",
-]
+name = "genius-square"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "Alex Cross", email = "AlexJCross90@gmail.com" }]
+requires-python = ">=3.12"
+dependencies = []
 
-[dependency-groups]
-dev = [
-    "pytest>=8.3.4",
-]
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
+[project.scripts]
+genius-square = "genius_square:_cli.main"
 
 [tool.maturin]
-python-source = "src"
-features = ["pyo3/extension-module"]
+module-name = "genius_square._core"
+python-packages = ["genius_square"]
+python-source = "python"
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[dependency-groups]
+dev = ["pytest>=8.3.4"]
