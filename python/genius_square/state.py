@@ -36,12 +36,16 @@ class GameState:
         # board = cls.create_bitboard()
         return cls(BITMASK + blocker_mask, [], [True] * 9)
 
+    def __repr__(self) -> str:
+        return Printer().str_repr(self.board, self.history)
+
 
 class Printer:
     BOTTOM_ROW = (1 << 6) - 1
     LEFT_COLUMN = 1 << 0 | 1 << 8 | 1 << 16 | 1 << 24 | 1 << 32 | 1 << 40
 
-    def print(self, board_mask: int, history: list[int]) -> None:
+    @classmethod
+    def str_repr(cls, board_mask: int, history: list[int]) -> str:
         grid = [None] * 8
         for i in range(8):
             grid[i] = [None] * 8
@@ -49,7 +53,7 @@ class Printer:
         board = board_mask
         for move in history:
             board &= ~move
-            piece_type = self._identify_piece(move)
+            piece_type = cls._identify_piece(move)
 
             for i in range(8):
                 for j in range(8):
@@ -71,29 +75,35 @@ class Printer:
         }
 
         # Banner
-        print("✨✨✨✨✨✨✨✨")
-        print(" GENIUS SQUARE")
-        print()
+        lines = list[str]()
+        lines.append("  1 2 3 4 5 6")
 
         # Now print the grid
-        print("  1 2 3 4 5 6")
         for i in range(6):
             char = chr(ord("A") + i)
-            print(f"{char} ", end="")
+            row = f"{char} "
             for j in range(6):
                 if grid[i][j] is not None:
                     piece_type = grid[i][j]
                     marker = color_by_piece_type[piece_type]
-                    print(marker, end="")
+                    row += marker
                 elif board & (1 << ((5 - i) * 8 + j)) > 0:
-                    print("👽", end="")
+                    row += "👽"
                 else:
-                    print("  ", end="")
-            print()
-        pass
+                    row += "🫥"
+            lines.append(row)
 
-    def _identify_piece(self, move: int) -> PieceType:
-        while move & self.BOTTOM_ROW == 0:
+        return "\n".join(lines)
+
+    def print(self, board_mask: int, history: list[int]) -> None:
+        str_repr = self.str_repr(board_mask, history)
+        print("✨✨✨✨✨✨✨✨")
+        print(" GENIUS SQUARE\n")
+        print(str_repr)
+
+    @classmethod
+    def _identify_piece(cls, move: int) -> PieceType:
+        while move & cls.BOTTOM_ROW == 0:
             move >>= 8
         while move & 1 == 0:
             move >>= 1
