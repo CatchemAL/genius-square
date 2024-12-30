@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from .dice import Dice, Side
 from .solver.solve import Solver
-from .state import GameState, Printer
+from .state import GameState
 
 
 @click.command()
@@ -14,9 +14,6 @@ from .state import GameState, Printer
 @click.option("--mask", default=None, type=int, help="Blocker bitmask")
 def solve(sides: str | None, mask: int | None) -> None:
     assert sides is None or mask is None, "Cannot specify both sides and mask"
-
-    solver = Solver()
-    printer = Printer()
 
     if sides:
         sides = sides.split(",")
@@ -33,8 +30,9 @@ def solve(sides: str | None, mask: int | None) -> None:
     blocker_mask = sum(sides)
     state = GameState.initial(blocker_mask)
 
+    solver = Solver()
     solver.solve(state)
-    printer.print(state)
+    state.print()
 
     print("\nSolved! ✨")
 

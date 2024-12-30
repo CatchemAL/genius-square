@@ -24,6 +24,9 @@ class GameState:
 
         return bitboard - mask
 
+    def print(self) -> None:
+        Printer().print(self.board, self.history)
+
     @classmethod
     def initial(cls, blocker_mask: int) -> Self:
         # board = cls.create_bitboard()
@@ -34,16 +37,13 @@ class Printer:
     BOTTOM_ROW = (1 << 6) - 1
     LEFT_COLUMN = 1 << 0 | 1 << 8 | 1 << 16 | 1 << 24 | 1 << 32 | 1 << 40
 
-    def __init__(self) -> None:
-        pass
-
-    def print(self, state: GameState) -> str:
+    def print(self, board_mask: int, history: list[int]) -> None:
         grid = [None] * 8
         for i in range(8):
             grid[i] = [None] * 8
 
-        board = state.board
-        for move in state.history:
+        board = board_mask
+        for move in history:
             board &= ~move
             piece_type = self._identify_piece(move)
 
