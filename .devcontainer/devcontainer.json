@@ -12,7 +12,9 @@
 		"vscode": {
 			"extensions": [
 				"charliermarsh.ruff",
-				"mechatroner.rainbow-csv"
+				"mechatroner.rainbow-csv",
+				"mhutchie.git-graph",
+				"ms-toolsai.jupyter"
 			]
 		}
 	},

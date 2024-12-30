@@ -21,6 +21,9 @@ build-backend = "maturin"
 
 [dependency-groups]
 dev = ["pytest>=8.3.4"]
+notebook = [
+    "ipykernel>=6.29.5",
+]
 
 [tool.ruff]
 line-length = 110
