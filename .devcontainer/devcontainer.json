@@ -11,7 +11,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"mechatroner.rainbow-csv"
 			]
 		}
 	},
