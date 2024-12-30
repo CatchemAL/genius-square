@@ -23,6 +23,24 @@
             ]
         },
         {
+            "name": "🐍 All Counts ✨",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "all-counts"
+            ]
+        },
+        {
+            "name": "🐍 Count 🧮",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "count"
+            ]
+        },
+        {
             "name": "🐍 Python Current File",
             "type": "debugpy",
             "request": "launch",

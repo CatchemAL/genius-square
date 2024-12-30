@@ -12,6 +12,10 @@ class GameState:
     history: list[int]
     available_pieces: list[bool]
 
+    @property
+    def is_solved(self) -> bool:
+        return len(self.history) == 9
+
     @staticmethod
     def create_bitboard() -> int:
         # Manual computation of BITMASK constant

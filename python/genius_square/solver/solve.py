@@ -3,6 +3,10 @@ from ..state import GameState
 from ._solve import hello_from_bin
 
 
+class Counter:
+    count: int = 0
+
+
 class Solver:
     def __init__(self) -> None:
         self.pieces = self.create_pieces()
@@ -10,13 +14,17 @@ class Solver:
     def solve(self, state: GameState) -> GameState:
         if self._solve(state, position=0):
             return state
-
         raise ValueError("No solution found")
 
-    def _solve(self, state: GameState, position: int) -> bool:
+    def count_solns(self, state: GameState) -> int:
+        counter = Counter()
+        self._solve(state, position=0, soln_count=counter)
+        return counter.count
+
+    def _solve(self, state: GameState, position: int, soln_count: Counter | None = None) -> bool:
         while state.board & (1 << position) > 0:
             position += 1
-            if position >= 64:
+            if position >= 48:
                 return False
 
         for piece in self.pieces:
@@ -36,12 +44,14 @@ class Solver:
                 state.history.append(pos_permutation)
                 state.available_pieces[piece_idx] = False
 
-                # All pieces have been placed
-                if len(state.history) == 9:
-                    return True
-
-                # Recurse...
-                if self._solve(state, position):
+                if state.is_solved:
+                    if soln_count is None:
+                        # We're not counting solutions, so we can return early
+                        return True
+                    # Solution found, increment counter then backtrack
+                    soln_count.count += 1
+                # Not solved so we must recurse...
+                elif self._solve(state, position, soln_count):
                     return True
 
                 # Backtrack
