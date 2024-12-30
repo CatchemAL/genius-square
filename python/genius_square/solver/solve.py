@@ -1,6 +1,8 @@
 import random
+import time
 from dataclasses import dataclass
 from enum import Enum, auto
+from itertools import product
 from typing import Self
 
 from tqdm import tqdm
@@ -116,16 +118,10 @@ class Dice:
         sides5 = {int(side) for side in self._dice[5].sides}
         sides6 = {int(side) for side in self._dice[6].sides}
 
-        blockers = list[int]()
-        for side0 in sides0:
-            for side1 in sides1:
-                for side2 in sides2:
-                    for side3 in sides3:
-                        for side4 in sides4:
-                            for side5 in sides5:
-                                for side6 in sides6:
-                                    blocker = side0 + side1 + side2 + side3 + side4 + side5 + side6
-                                    blockers.append(blocker)
+        blockers = [
+            sum(combination)
+            for combination in product(sides0, sides1, sides2, sides3, sides4, sides5, sides6)
+        ]
 
         return blockers
 
@@ -134,8 +130,8 @@ class PieceType(Enum):
     SQUARE = 0
     BAR4 = 1
     T = 2
-    L4 = 3
-    Z = 4
+    Z = 3
+    L4 = 4
     BAR3 = 5
     L3 = 6
     BAR2 = 7
@@ -146,11 +142,11 @@ class PieceType(Enum):
         return {
             PieceType.SQUARE: [771],
             PieceType.BAR4: [15, 16843009],
-            PieceType.T: [519, 66305, 131842, 1794],
-            PieceType.L4: [263, 1031, 1793, 65795, 131587, 196865, 197122, 1796],
-            PieceType.Z: [1539, 131841, 774, 66306],
+            PieceType.T: [519, 66305, 65921, 897],
+            PieceType.Z: [1539, 131841, 387, 33153],
+            PieceType.L4: [263, 1031, 1793, 65795, 131587, 196865, 98561, 449],
             PieceType.BAR3: [7, 65793],
-            PieceType.L3: [259, 515, 769, 770],
+            PieceType.L3: [259, 515, 769, 385],
             PieceType.BAR2: [3, 257],
             PieceType.DOT: [1],
         }
@@ -202,7 +198,6 @@ class Solver:
             if position >= 64:
                 return False
 
-        position_bit = 1 << position
         for piece in self.pieces:
             piece_idx = piece.piece_type.value
 
@@ -211,12 +206,6 @@ class Solver:
 
             for permutation in piece.permutations:
                 pos_permutation = permutation << position
-                while pos_permutation & position_bit == 0:
-                    pos_permutation >>= 1
-                if pos_permutation & BITMASK > 1:
-                    # The permutation doesn't fit in the board
-                    continue
-
                 if (state.board & pos_permutation) > 0:
                     # The piece cannot be placed
                     continue
@@ -253,7 +242,7 @@ class Solver:
         return sorted(pieces, key=lambda x: x.piece_type.value)
 
 
-class GameDisplayer:
+class Printer:
     BOTTOM_ROW = (1 << 6) - 1
     LEFT_COLUMN = 1 << 0 | 1 << 8 | 1 << 16 | 1 << 24 | 1 << 32 | 1 << 40
 
@@ -314,7 +303,7 @@ class GameDisplayer:
     def _identify_piece(self, move: int) -> PieceType:
         while move & self.BOTTOM_ROW == 0:
             move >>= 8
-        while move & self.LEFT_COLUMN == 0:
+        while move & 1 == 0:
             move >>= 1
 
         permutations_by_piece = PieceType.permutations_by_piece()
@@ -329,10 +318,9 @@ def solve() -> str:
     dice = Dice()
     sides = dice.roll()
     blockers = sum(sides)
-    # blockers = 35257386926098
 
     solver = Solver()
-    printer = GameDisplayer()
+    printer = Printer()
 
     print("Setup:")
     print(" - " + ", ".join(map(str, sides)))
