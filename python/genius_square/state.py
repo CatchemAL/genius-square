@@ -25,9 +25,9 @@ class GameState:
         return bitboard - mask
 
     @classmethod
-    def initial(cls, blockers: int) -> Self:
+    def initial(cls, blocker_mask: int) -> Self:
         # board = cls.create_bitboard()
-        return cls(BITMASK + blockers, [], [True] * 9)
+        return cls(BITMASK + blocker_mask, [], [True] * 9)
 
 
 class Printer:

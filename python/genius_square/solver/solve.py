@@ -64,32 +64,3 @@ class Solver:
             pieces.append(piece)
 
         return sorted(pieces, key=lambda x: x.piece_type.value)
-
-
-def solve() -> str:
-    dice = Dice()
-    sides = dice.roll()
-    blockers = sum(sides)
-
-    solver = Solver()
-    printer = Printer()
-
-    print("Setup:")
-    print(" - " + ", ".join(map(str, sides)))
-    print()
-    state = GameState.initial(blockers)
-
-    solver.solve(state)
-    printer.print(state)
-
-    print("\nSolved! ✨")
-
-
-def solve() -> str:
-    dice = Dice()
-    solver = Solver()
-
-    all_blockers = dice.roll_all_bitmasks()
-    for blockers in tqdm(all_blockers):
-        state = GameState.initial(blockers)
-        solver.solve(state)

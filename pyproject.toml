@@ -5,12 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Alex Cross", email = "AlexJCross90@gmail.com" }]
 requires-python = ">=3.12"
-dependencies = [
-    "tqdm>=4.67.1",
-]
+dependencies = ["click>=8.1.8", "tqdm>=4.67.1"]
 
 [project.scripts]
-genius-square = "genius_square:_cli.main"
+genius-square = "genius_square:_cli.gs_cli"
 
 [tool.maturin]
 module-name = "genius_square.solver._solve"

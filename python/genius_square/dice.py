@@ -17,8 +17,11 @@ class DieType(Enum):
 class Side:
     __slots__ = ["value"]
 
-    def __init__(self, side: str) -> None:
-        self.value = self._str_to_int(side)
+    def __init__(self, side: str | int) -> None:
+        if isinstance(side, str):
+            self.value = self._str_to_int(side)
+        else:
+            self.value = side
 
     def __int__(self) -> int:
         return self.value
@@ -63,6 +66,18 @@ class Side:
 
         letter, number = chr(ord("A") + 5 - i), j + 1
         return f"{letter}{number}"
+
+    @classmethod
+    def from_bitmask(cls, mask: int) -> list[Self]:
+        sides = list[Self]()
+        for i in range(6):
+            for j in range(6):
+                bit = 1 << (i * 8 + j)
+                if mask & bit:
+                    side = cls(bit)
+                    sides.append(side)
+
+        return sides
 
 
 class Die:

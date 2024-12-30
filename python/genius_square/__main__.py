@@ -1,4 +1,4 @@
-from ._cli import main
+from . import _cli as cli
 
 if __name__ == "__main__":
-    main()
+    cli.gs_cli()

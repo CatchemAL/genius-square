@@ -5,10 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "🐍 Python Main",
+            "name": "🐍 Solve 🧠",
             "type": "debugpy",
             "request": "launch",
-            "module": "python.genius_square"
+            "module": "python.genius_square",
+            "args": [
+                "solve"
+            ]
+        },
+        {
+            "name": "🐍 Benchmark ⏳",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "benchmark"
+            ]
         },
         {
             "name": "🐍 Python Current File",
