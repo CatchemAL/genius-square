@@ -1,3 +1,6 @@
+from concurrent.futures import ProcessPoolExecutor
+from functools import partial
+
 import click
 from tqdm import tqdm
 
@@ -40,11 +43,15 @@ def solve(sides: str | None, mask: int | None) -> None:
 def benchmark() -> None:
     dice = Dice()
     solver = Solver()
+    s = partial(solve_mask, solver=solver)
+    masks = dice.all_bitmasks()
+    with ProcessPoolExecutor() as executor:
+        list(tqdm(executor.map(s, masks, chunksize=100), total=len(masks)))
 
-    all_blockers = dice.all_bitmasks()
-    for blockers in tqdm(all_blockers):
-        state = GameState.initial(blockers)
-        solver.solve(state)
+
+def solve_mask(mask: int, solver: Solver) -> None:
+    state = GameState.initial(mask)
+    solver.solve(state)
 
 
 @click.group()
