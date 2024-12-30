@@ -1,17 +1,17 @@
 import random
-from enum import Enum, auto
+from enum import Enum
 from itertools import product
-from typing import Generator, Self
+from typing import Self
 
 
 class DieType(Enum):
-    DIE1 = auto()
-    DIE2 = auto()
-    DIE3 = auto()
-    DIE4 = auto()
-    DIE5 = auto()
-    DIE6 = auto()
-    DIE7 = auto()
+    DIE1 = ("A6", "A6", "A6", "F1", "F1", "F1")
+    DIE2 = ("D3", "B4", "C3", "C4", "E3", "D4")
+    DIE3 = ("D1", "D2", "F3", "A1", "E2", "C1")
+    DIE4 = ("B1", "B2", "B3", "A2", "A3", "C2")
+    DIE5 = ("E4", "E5", "F5", "E6", "D5", "F4")
+    DIE6 = ("B5", "C5", "F6", "D6", "A4", "C6")
+    DIE7 = ("A5", "F2", "A5", "F2", "B6", "E1")
 
 
 class Side:
@@ -90,18 +90,7 @@ class Die:
 
     @classmethod
     def create(cls, die_type: DieType) -> Self:
-        sides_by_die = {
-            DieType.DIE1: ("A6", "A6", "A6", "F1", "F1", "F1"),
-            DieType.DIE2: ("D3", "B4", "C3", "C4", "E3", "D4"),
-            DieType.DIE3: ("D1", "D2", "F3", "A1", "E2", "C1"),
-            DieType.DIE4: ("B1", "B2", "B3", "A2", "A3", "C2"),
-            DieType.DIE5: ("E4", "E5", "F5", "E6", "D5", "F4"),
-            DieType.DIE6: ("B5", "C5", "F6", "D6", "A4", "C6"),
-            DieType.DIE7: ("A5", "F2", "A5", "F2", "B6", "E1"),
-        }
-
-        sides = sides_by_die[die_type]
-        return cls(*sides)
+        return cls(*die_type.value)
 
 
 class Dice:
@@ -111,10 +100,10 @@ class Dice:
     def roll(self) -> list[Side]:
         return [die.roll() for die in self._dice]
 
-    def roll_bitmask(self) -> int:
+    def bitmask(self) -> int:
         return sum(int(side) for side in self.roll())
 
-    def roll_all(self) -> Generator[list[Side], None, None]:
+    def all_bitmasks(self) -> list[int]:
         sides0 = {int(side) for side in self._dice[0].sides}
         sides1 = {int(side) for side in self._dice[1].sides}
         sides2 = {int(side) for side in self._dice[2].sides}
@@ -123,8 +112,5 @@ class Dice:
         sides5 = {int(side) for side in self._dice[5].sides}
         sides6 = {int(side) for side in self._dice[6].sides}
 
-        for combination in product(sides0, sides1, sides2, sides3, sides4, sides5, sides6):
-            yield combination
-
-    def roll_all_bitmasks(self) -> list[int]:
-        return [sum(sides) for sides in self.roll_all()]
+        all_rolls = product(sides0, sides1, sides2, sides3, sides4, sides5, sides6)
+        return [sum(sides) for sides in all_rolls]

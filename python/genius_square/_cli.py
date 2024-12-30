@@ -41,7 +41,7 @@ def benchmark() -> None:
     dice = Dice()
     solver = Solver()
 
-    all_blockers = dice.roll_all_bitmasks()
+    all_blockers = dice.all_bitmasks()
     for blockers in tqdm(all_blockers):
         state = GameState.initial(blockers)
         solver.solve(state)

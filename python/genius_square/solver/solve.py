@@ -1,8 +1,5 @@
-from tqdm import tqdm
-
-from ..dice import Dice
 from ..pieces import Piece, PieceType
-from ..state import GameState, Printer
+from ..state import GameState
 from ._solve import hello_from_bin
 
 
