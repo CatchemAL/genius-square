@@ -5,7 +5,7 @@ import click
 from tqdm import tqdm
 
 from .dice import Dice, Side
-from .solver.solve import Solver
+from .solve import Solver
 from .state import GameState
 
 

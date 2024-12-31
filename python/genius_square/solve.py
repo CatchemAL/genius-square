@@ -1,6 +1,5 @@
-from ..pieces import Piece, PieceType
-from ..state import GameState
-from ._solve import hello_from_bin
+from .pieces import Piece, PieceType
+from .state import GameState
 
 
 class Counter:
