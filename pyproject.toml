@@ -11,7 +11,7 @@ dependencies = ["click>=8.1.8", "tqdm>=4.67.1"]
 genius-square = "genius_square:_cli.gs_cli"
 
 [tool.maturin]
-module-name = "genius_square.solver._solve"
+module-name = "genius_square.experimental._solve"
 python-packages = ["genius_square"]
 python-source = "python"
 
@@ -21,11 +21,7 @@ build-backend = "maturin"
 
 [dependency-groups]
 dev = ["pytest>=8.3.4"]
-notebook = [
-    "ipykernel>=6.29.5",
-    "polars>=1.18.0",
-    "seaborn>=0.13.2",
-]
+notebook = ["ipykernel>=6.29.5", "polars>=1.18.0", "seaborn>=0.13.2"]
 
 [tool.ruff]
 line-length = 110
