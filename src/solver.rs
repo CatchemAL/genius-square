@@ -20,4 +20,8 @@ impl Counter {
     fn get_count(&self) -> PyResult<i32> {
         Ok(self.count)
     }
+
+    fn get_count_plus(&self, x: u32) -> PyResult<i32> {
+        Ok(self.count + (x as i32))
+    }
 }

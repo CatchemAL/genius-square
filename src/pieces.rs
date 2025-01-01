@@ -1,8 +1,10 @@
+use pyo3::prelude::*;
 use std::collections::HashMap;
 
 const NUM_PIECES: usize = 9;
 const BITMASK: u64 = 0b11111111_11111111_11000000_11000000_11000000_11000000_11000000_11000000;
 
+#[pyclass(eq, eq_int)]
 #[repr(u16)]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum PieceType {
@@ -61,14 +63,17 @@ impl Piece {
     }
 }
 
+#[pyclass]
 #[derive(Debug, Clone)]
 pub struct GameState {
-    board: u64,
+    pub board: u64,
     available_pieces: u16,
-    history: Vec<u64>,
+    pub history: Vec<u64>,
 }
 
+#[pymethods]
 impl GameState {
+    #[new]
     pub fn new(blocker_mask: u64) -> Self {
         Self {
             board: blocker_mask & BITMASK,
@@ -81,35 +86,34 @@ impl GameState {
         self.available_pieces == 0
     }
 
-    pub fn mark_piece_as_used(&mut self, piece_type: PieceType) {
+    fn mark_piece_as_used(&mut self, piece_type: PieceType) {
         self.available_pieces &= !(piece_type as u16);
     }
 
-    pub fn mark_piece_as_available(&mut self, piece_type: PieceType) {
+    fn mark_piece_as_available(&mut self, piece_type: PieceType) {
         self.available_pieces |= piece_type as u16;
     }
 
-    pub fn is_available(&self, piece_type: PieceType) -> bool {
+    fn is_available(&self, piece_type: PieceType) -> bool {
         self.available_pieces & (piece_type as u16) != 0
     }
 }
 
+#[pyclass]
 pub struct Solver {
     pieces: Vec<Piece>,
 }
 
+#[pymethods]
 impl Solver {
+    #[new]
     pub fn new() -> Self {
         let pieces = Piece::pieces();
         Self { pieces }
     }
 
-    pub fn solve(&self, state: &mut GameState) -> Result<(), &'static str> {
-        if self._solve(state, 0) {
-            Ok(())
-        } else {
-            Err("No solution found")
-        }
+    pub fn solve(&self, state: &mut GameState) -> bool {
+        self._solve(state, 0)
     }
 
     fn _solve(&self, state: &mut GameState, mut pos: usize) -> bool {

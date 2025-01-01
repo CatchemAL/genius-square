@@ -1,6 +1,8 @@
-from ._solve import Counter, hello_from_bin
+from ._solve import Counter, GameState, Solver, hello_from_bin
 
 __all__ = [
     "Counter",
+    "GameState",
     "hello_from_bin",
+    "Solver",
 ]

@@ -33,5 +33,8 @@ fn main() {
     let solver = Solver::new();
     solver.solve(&mut state);
 
-    print!("test");
+    let x = solver.solve(&mut state);
+
+    let value = state.board;
+    print!("The board value is {value}");
 }

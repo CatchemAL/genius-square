@@ -39,6 +39,9 @@ def count(sides: str | None, mask: int | None) -> None:
 @click.option("--sides", default=None, help="CSV of sides (e.g. A6,C3,F3,B3,D5,D6,A5")
 @click.option("--mask", default=None, type=int, help="Blocker bitmask")
 def solve(sides: str | None, mask: int | None) -> None:
+    from .experimental import GameState as ExperimentalGameState
+    from .experimental import Solver as ExperimentalSolver
+
     assert sides is None or mask is None, "Cannot specify both sides and mask"
 
     if sides:
@@ -59,6 +62,14 @@ def solve(sides: str | None, mask: int | None) -> None:
     solver = Solver()
     solver.solve(state)
     state.print()
+
+    state = ExperimentalGameState(blocker_mask)
+    solver = ExperimentalSolver()
+    y = solver.solve(state)
+    print(y)
+
+    iss = state.is_solved()
+    print(iss)
 
     print("\nSolved! ✨")
 
