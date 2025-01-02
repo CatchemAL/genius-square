@@ -106,4 +106,4 @@ The history of pieces played follows a similar philosphy.
 - Most solns: 22,317 (mask=67070209297408)
 - Median solns: 1,340
 
-<img src="https://raw.githubusercontent.com/CatchemAl/genius-square/blob/main/data/distribution.png" width="420">
+<img src="https://github.com/CatchemAL/genius-square/blob/main/data/distribution.png?raw=true" width="420">
