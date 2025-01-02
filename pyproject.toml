@@ -23,5 +23,8 @@ build-backend = "maturin"
 dev = ["pytest>=8.3.4"]
 notebook = ["ipykernel>=6.29.5", "polars>=1.18.0", "seaborn>=0.13.2"]
 
+[tool.uv]
+default-groups = ["dev", "notebook"]
+
 [tool.ruff]
 line-length = 110
