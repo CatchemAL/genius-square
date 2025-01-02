@@ -12,10 +12,8 @@ class Solver:
     def __init__(self) -> None:
         self.pieces = PIECES
 
-    def solve(self, state: GameState) -> GameState:
-        if self._solve(state, position=0):
-            return state
-        raise ValueError("No solution found")
+    def solve(self, state: GameState) -> bool:
+        return self._solve(state, position=0)
 
     def count_solns(self, state: GameState) -> int:
         counter = Counter()
