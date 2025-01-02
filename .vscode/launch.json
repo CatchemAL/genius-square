@@ -19,7 +19,8 @@
             "request": "launch",
             "module": "python.genius_square",
             "args": [
-                "solve-rust"
+                "solve",
+                "--rust"
             ]
         },
         {
@@ -67,6 +68,16 @@
             "module": "python.genius_square",
             "args": [
                 "count"
+            ]
+        },
+        {
+            "name": "🐍 Count 🦀",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "count",
+                "--rust"
             ]
         },
         {
