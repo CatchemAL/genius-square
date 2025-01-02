@@ -1,10 +1,11 @@
 mod bar;
 mod foo;
 mod pieces;
+mod solver;
+mod state;
 
-use pieces::GameState;
-use pieces::Piece;
-use pieces::Solver;
+use solver::Solver;
+use state::GameState;
 
 fn main() {
     println!("Hello, World!");
@@ -21,20 +22,21 @@ fn main() {
     let z = bar::baz::factorial(b);
     println!("{b}! = {z}");
 
-    let piece_type = pieces::PieceType::Square;
-    let permutations = vec![771];
-    let piece = Piece::new(piece_type, permutations);
-
-    let pieces = Piece::pieces();
-
-    let blocker_mask: u64 = 35257386926098;
-    let mut state = GameState::new(blocker_mask);
-
     let solver = Solver::new();
-    solver.solve(&mut state);
 
-    let x = solver.solve(&mut state);
+    let blocker_mask: u64 = 35257386599434;
+    let mut state = GameState::new(blocker_mask);
+    let is_solved = solver.solve(&mut state);
 
-    let value = state.board;
-    print!("The board value is {value}");
+    if is_solved {
+        let value = state.board;
+        println!("The board value is {value}");
+    } else {
+        println!("Failed to solve...")
+    }
+
+    let blocker_mask: u64 = 35257386599434;
+    let mut state = GameState::new(blocker_mask);
+    let soln_count = solver.count_solns(&mut state);
+    println!("Num solutions is {soln_count}");
 }

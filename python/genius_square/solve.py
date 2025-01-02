@@ -1,5 +1,7 @@
-from .pieces import Piece, PieceType
+from .pieces import Piece
 from .state import GameState
+
+PIECES = Piece.create_pieces()
 
 
 class Counter:
@@ -8,7 +10,7 @@ class Counter:
 
 class Solver:
     def __init__(self) -> None:
-        self.pieces = self.create_pieces()
+        self.pieces = PIECES
 
     def solve(self, state: GameState) -> GameState:
         if self._solve(state, position=0):
@@ -59,14 +61,3 @@ class Solver:
                 state.available_pieces[piece_idx] = True
 
         return False
-
-    @staticmethod
-    def create_pieces() -> list[Piece]:
-        permutations_by_piece = PieceType.permutations_by_piece()
-
-        pieces = list[Piece]()
-        for piece_type, permutations in permutations_by_piece.items():
-            piece = Piece(piece_type, permutations)
-            pieces.append(piece)
-
-        return sorted(pieces, key=lambda x: x.piece_type.value)

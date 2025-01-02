@@ -14,6 +14,15 @@
             ]
         },
         {
+            "name": "🦀 Solve 🧠",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "solve-rust"
+            ]
+        },
+        {
             "name": "🐍 Benchmark ⏳",
             "type": "debugpy",
             "request": "launch",
@@ -23,12 +32,32 @@
             ]
         },
         {
+            "name": "🦀 Benchmark ⏳",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "benchmark",
+                "--rust"
+            ]
+        },
+        {
             "name": "🐍 All Counts ✨",
             "type": "debugpy",
             "request": "launch",
             "module": "python.genius_square",
             "args": [
                 "all-counts"
+            ]
+        },
+        {
+            "name": "🦀 All Counts ✨",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "python.genius_square",
+            "args": [
+                "all-counts",
+                "--rust"
             ]
         },
         {

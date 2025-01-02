@@ -1,10 +1,5 @@
-use pyo3::prelude::*;
 use std::collections::HashMap;
 
-const NUM_PIECES: usize = 9;
-const BITMASK: u64 = 0b11111111_11111111_11000000_11000000_11000000_11000000_11000000_11000000;
-
-#[pyclass(eq, eq_int)]
 #[repr(u16)]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum PieceType {
@@ -38,8 +33,8 @@ impl PieceType {
 
 #[derive(Debug, Clone)]
 pub struct Piece {
-    piece_type: PieceType,
-    permutations: Vec<u64>,
+    pub piece_type: PieceType,
+    pub permutations: Vec<u64>,
 }
 
 impl Piece {
@@ -60,97 +55,5 @@ impl Piece {
         }
 
         pieces
-    }
-}
-
-#[pyclass]
-#[derive(Debug, Clone)]
-pub struct GameState {
-    pub board: u64,
-    available_pieces: u16,
-    pub history: Vec<u64>,
-}
-
-#[pymethods]
-impl GameState {
-    #[new]
-    pub fn new(blocker_mask: u64) -> Self {
-        Self {
-            board: blocker_mask & BITMASK,
-            available_pieces: 0b1_11111111,
-            history: Vec::with_capacity(NUM_PIECES),
-        }
-    }
-
-    pub fn is_solved(&self) -> bool {
-        self.available_pieces == 0
-    }
-
-    fn mark_piece_as_used(&mut self, piece_type: PieceType) {
-        self.available_pieces &= !(piece_type as u16);
-    }
-
-    fn mark_piece_as_available(&mut self, piece_type: PieceType) {
-        self.available_pieces |= piece_type as u16;
-    }
-
-    fn is_available(&self, piece_type: PieceType) -> bool {
-        self.available_pieces & (piece_type as u16) != 0
-    }
-}
-
-#[pyclass]
-pub struct Solver {
-    pieces: Vec<Piece>,
-}
-
-#[pymethods]
-impl Solver {
-    #[new]
-    pub fn new() -> Self {
-        let pieces = Piece::pieces();
-        Self { pieces }
-    }
-
-    pub fn solve(&self, state: &mut GameState) -> bool {
-        self._solve(state, 0)
-    }
-
-    fn _solve(&self, state: &mut GameState, mut pos: usize) -> bool {
-        while (state.board & (1 << pos)) != 0 {
-            pos += 1;
-            if pos > 48 {
-                return false;
-            }
-        }
-
-        for piece in &self.pieces {
-            if !state.is_available(piece.piece_type) {
-                continue;
-            }
-
-            for &permutation in &piece.permutations {
-                let pos_permutation = permutation << pos;
-                if (state.board & pos_permutation) != 0 {
-                    // The piece cannot be placed.
-                    continue;
-                }
-
-                // Place the piece
-                state.board |= pos_permutation;
-                state.history.push(pos_permutation);
-                state.mark_piece_as_used(piece.piece_type);
-
-                if state.is_solved() || self._solve(state, pos) {
-                    return true;
-                }
-
-                state.board &= !pos_permutation;
-                state.history.pop();
-                state.mark_piece_as_available(piece.piece_type);
-            }
-        }
-
-        false
     }
 }

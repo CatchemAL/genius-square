@@ -1,5 +1,4 @@
 from concurrent.futures import ProcessPoolExecutor
-from functools import partial
 
 import click
 from tqdm import tqdm
@@ -12,7 +11,35 @@ from .state import GameState
 @click.command()
 @click.option("--sides", default=None, help="CSV of sides (e.g. A6,C3,F3,B3,D5,D6,A5")
 @click.option("--mask", default=None, type=int, help="Blocker bitmask")
-def count(sides: str | None, mask: int | None) -> None:
+def solve(sides: str | None, mask: int | None) -> None:
+    assert sides is None or mask is None, "Cannot specify both sides and mask"
+
+    if sides:
+        sides = sides.split(",")
+        sides = [Side(side) for side in sides]
+    elif mask:
+        sides = Side.from_bitmask(mask)
+    else:
+        dice = Dice()
+        sides = dice.roll()
+
+    print("Setup:")
+    print(" - " + ", ".join(map(str, sides)))
+    print()
+    blocker_mask: int = sum(sides)
+    state = GameState.initial(blocker_mask)
+
+    solver = Solver()
+    solver.solve(state)
+    state.print()
+
+    print("\nSolved! ✨")
+
+
+@click.command()
+@click.option("--sides", default=None, help="CSV of sides (e.g. A6,C3,F3,B3,D5,D6,A5")
+@click.option("--mask", default=None, type=int, help="Blocker bitmask")
+def count_solns(sides: str | None, mask: int | None) -> None:
     assert sides is None or mask is None, "Cannot specify both sides and mask"
 
     if sides:
@@ -36,11 +63,23 @@ def count(sides: str | None, mask: int | None) -> None:
 
 
 @click.command()
+@click.option("--rust", default=False, is_flag=True, help="Whether to use the rust engine.")
+def benchmark(rust: bool) -> None:
+    dice = Dice()
+    fn = solve_mask_rust if rust else solve_mask
+    masks = dice.all_bitmasks()
+
+    with ProcessPoolExecutor() as executor:
+        list(tqdm(executor.map(fn, masks, chunksize=128), total=len(masks)))
+
+
+@click.command()
 @click.option("--sides", default=None, help="CSV of sides (e.g. A6,C3,F3,B3,D5,D6,A5")
 @click.option("--mask", default=None, type=int, help="Blocker bitmask")
-def solve(sides: str | None, mask: int | None) -> None:
+def solve_rust(sides: str | None, mask: int | None) -> None:
     from .experimental import GameState as ExperimentalGameState
     from .experimental import Solver as ExperimentalSolver
+    from .printer import Printer
 
     assert sides is None or mask is None, "Cannot specify both sides and mask"
 
@@ -56,40 +95,32 @@ def solve(sides: str | None, mask: int | None) -> None:
     print("Setup:")
     print(" - " + ", ".join(map(str, sides)))
     print()
-    blocker_mask = sum(sides)
-    state = GameState.initial(blocker_mask)
+    blocker_mask: int = sum(sides)
 
-    solver = Solver()
-    solver.solve(state)
-    state.print()
-
+    # Rust workbench
     state = ExperimentalGameState(blocker_mask)
     solver = ExperimentalSolver()
-    y = solver.solve(state)
-    print(y)
+    is_success = solver.solve(state)
+    print(f"is solve successful: {is_success}")
 
-    iss = state.is_solved()
-    print(iss)
+    iss = state.is_solved
+    print(f"is state solved {iss}")
+
+    board = state.board
+    print(f"board value is {board}")
+
+    printer = Printer()
+    printer.print(state.board, state.history)
 
     print("\nSolved! ✨")
 
 
 @click.command()
-def benchmark() -> None:
-    dice = Dice()
-    solver = Solver()
-    fn = partial(solve_mask, solver=solver)
-    masks = dice.all_bitmasks()
-    with ProcessPoolExecutor() as executor:
-        list(tqdm(executor.map(fn, masks, chunksize=64), total=len(masks)))
-
-
-@click.command()
 @click.option("--file", default="data/solutions.csv", help="File to write solutions to")
-def all_counts(file: str) -> None:
+@click.option("--rust", default=False, is_flag=True, help="Whether to use the rust engine.")
+def all_counts(file: str, rust: bool) -> None:
     dice = Dice()
-    solver = Solver()
-    fn = partial(count_mask, solver=solver)
+    fn = count_mask_rust if rust else count_mask
     masks = dice.all_bitmasks()
     with ProcessPoolExecutor() as executor:
         results = list(tqdm(executor.map(fn, masks, chunksize=32), total=len(masks)))
@@ -112,13 +143,38 @@ def all_counts(file: str) -> None:
     print("+-----------------+------------+")
 
 
-def solve_mask(mask: int, solver: Solver) -> None:
+def solve_mask(mask: int) -> None:
+    solver = Solver()
     state = GameState.initial(mask)
     solver.solve(state)
 
 
-def count_mask(mask: int, solver: Solver) -> tuple[int, int]:
+def solve_mask_rust(mask: int) -> None:
+    from .experimental import GameState as ExperimentalGameState
+    from .experimental import Solver as ExperimentalSolver
+
+    solver = ExperimentalSolver()
+    state = ExperimentalGameState(mask)
+
+    if solver.solve(state):
+        return
+    raise ValueError("Failed to solve")
+
+
+def count_mask(mask: int) -> tuple[int, int]:
+    solver = Solver()
     state = GameState.initial(mask)
+    soln_count = solver.count_solns(state)
+    return mask, soln_count
+
+
+def count_mask_rust(mask: int) -> tuple[int, int]:
+    from .experimental import GameState as ExperimentalGameState
+    from .experimental import Solver as ExperimentalSolver
+
+    solver = ExperimentalSolver()
+    state = ExperimentalGameState(mask)
+
     soln_count = solver.count_solns(state)
     return mask, soln_count
 
@@ -128,7 +184,8 @@ def gs_cli():
     pass
 
 
-gs_cli.add_command(benchmark, "benchmark")
-gs_cli.add_command(count, "count")
-gs_cli.add_command(all_counts, "all-counts")
 gs_cli.add_command(solve, "solve")
+gs_cli.add_command(solve_rust, "solve-rust")
+gs_cli.add_command(benchmark, "benchmark")
+gs_cli.add_command(count_solns, "count")
+gs_cli.add_command(all_counts, "all-counts")

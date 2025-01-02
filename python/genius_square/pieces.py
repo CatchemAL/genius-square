@@ -33,3 +33,14 @@ class PieceType(Enum):
 class Piece:
     piece_type: PieceType
     permutations: list[int]
+
+    @classmethod
+    def create_pieces(cls) -> list[Self]:
+        permutations_by_piece = PieceType.permutations_by_piece()
+
+        pieces = list[Self]()
+        for piece_type, permutations in permutations_by_piece.items():
+            piece = cls(piece_type, permutations)
+            pieces.append(piece)
+
+        return sorted(pieces, key=lambda x: x.piece_type.value)
