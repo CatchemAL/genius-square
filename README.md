@@ -1,7 +1,7 @@
 ## Genius-Square
-A fast solver for the game Genius Square written in Python and Rust.
+An extremely fast solver for the game [Genius Square](https://www.happypuzzle.co.uk/family-puzzles-and-games/the-genius-collection/genius-square) written in Python and Rust.
 
-The package comes with a CLI tool and Python API.
+The package comes with a CLI tool and a Python API.
 ### CLI Tool
 ```bash
 # Using the solve interface
@@ -11,9 +11,11 @@ genius-square solve --mask=35257386599434
 
 # Solve all problems
 genius-square benchmark
+genius-square benchmark --rust
 
 # Get the number of valid solutions for all configurations
 genius-square all-counts
+genius-square all-counts --rust
 ```
 
 ### Python API
@@ -46,16 +48,30 @@ F 🟩🟩👽🟥🟥👽
 
 
 
-### Speed
+### Speed (pure Python) 🐍
 The package solves the 62,208 puzzles in about 1.8 seconds on my laptop (MacBook Pro 2023), averaging 36k solves per second.
 ```bash
-/workspaces/genius-square (main) $ genius-square benchmark
-100%|█████████| 62208/62208 [00:01<00:00, 36138.80it/s]
+/workspaces/genius-square $ genius-square benchmark
+100%|██████████| 62208/62208 [00:01<00:00, 36138.80it/s]
 ```
 All possible solutions for all possible configurations takes 26 minutes.
 ```bash
+/workspaces/genius-square $ genius-square all-counts
 100%|██████████| 62208/62208 [26:04<00:00, 39.77it/s] 
 ```
+
+### Speed (Rust engine) 🦀
+Rust provides a x60 speedup and solves all problems in 0.1 seconds.
+```bash
+/workspaces/genius-square $ genius-square benchmark --rust
+100%|██████████| 62208/62208 [00:00<00:00, 405135.26it/s]
+```
+To find all possible solutions to all possible configurations takes 25 seconds.
+```bash
+/workspaces/genius-square $ genius-square all-counts --rust
+100%|██████████| 62208/62208 [00:25<00:00, 2399.41it/s]
+```
+
 
 The package utilises:
 - Very efficient/compact bitboard representations to manipulate pieces and check validity

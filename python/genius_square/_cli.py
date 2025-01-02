@@ -123,7 +123,7 @@ def all_counts(file: str, rust: bool) -> None:
     fn = count_mask_rust if rust else count_mask
     masks = dice.all_bitmasks()
     with ProcessPoolExecutor() as executor:
-        results = list(tqdm(executor.map(fn, masks, chunksize=32), total=len(masks)))
+        results = list(tqdm(executor.map(fn, masks, chunksize=64), total=len(masks)))
         results = sorted(results, key=lambda x: x[1])
 
     csv = "mask,soln_count\n" + "\n".join([f"{mask},{count}" for mask, count in results])
