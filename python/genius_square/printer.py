@@ -1,12 +1,17 @@
+from dataclasses import dataclass
+
 from .pieces import PieceType
 
 
+@dataclass
 class Printer:
+    empty_piece: str = "🫥"
+    blocker_piece: str = "🔘"
+
     BOTTOM_ROW = (1 << 6) - 1
     LEFT_COLUMN = 1 << 0 | 1 << 8 | 1 << 16 | 1 << 24 | 1 << 32 | 1 << 40
 
-    @classmethod
-    def str_repr(cls, board_mask: int, history: list[int]) -> str:
+    def str_repr(self, board_mask: int, history: list[int]) -> str:
         grid = [None] * 8
         for i in range(8):
             grid[i] = [None] * 8
@@ -14,7 +19,7 @@ class Printer:
         board = board_mask
         for move in history:
             board &= ~move
-            piece_type = cls._identify_piece(move)
+            piece_type = self._identify_piece(move)
 
             for i in range(8):
                 for j in range(8):
@@ -35,23 +40,19 @@ class Printer:
             PieceType.DOT: "⬛️",
         }
 
-        # Banner
-        lines = list[str]()
-        lines.append("  1 2 3 4 5 6")
-
         # Now print the grid
+        lines = list[str]()
         for i in range(6):
-            char = chr(ord("A") + i)
-            row = f"{char} "
+            row = ""
             for j in range(6):
                 if grid[i][j] is not None:
                     piece_type = grid[i][j]
                     marker = color_by_piece_type[piece_type]
                     row += marker
                 elif board & (1 << ((5 - i) * 8 + j)) > 0:
-                    row += "👽"
+                    row += self.blocker_piece
                 else:
-                    row += "🫥"
+                    row += self.empty_piece
             lines.append(row)
 
         return "\n".join(lines)
@@ -62,9 +63,8 @@ class Printer:
         print(" GENIUS SQUARE\n")
         print(str_repr)
 
-    @classmethod
-    def _identify_piece(cls, move: int) -> PieceType:
-        while move & cls.BOTTOM_ROW == 0:
+    def _identify_piece(self, move: int) -> PieceType:
+        while move & self.BOTTOM_ROW == 0:
             move >>= 8
         while move & 1 == 0:
             move >>= 1
