@@ -107,3 +107,66 @@ The history of pieces played follows a similar philosphy.
 - Median solns: 1,340
 
 <img src="https://github.com/CatchemAL/genius-square/blob/main/data/distribution.png?raw=true" width="420">
+
+## Going beyond the game
+### Insanely hard mode
+We can forego the dice and instead ask, "are there any configurations of the board with only one solution?". This is quite a step up in complexity - there are $36C7 = 8,347,680$ mask configurations and we want to count the number of solutions to each configuration. The average number of solutions per configuration is 1,364, so this requires us to find 11,387,941,312 solution. On my laptop, this takes 48 minutes.
+
+```
+100%|██████████| 8347680/8347680 [48:42<00:00, 2856.61it/s] 
+```
+
+
+Here is one such configuration. Can you solve it?
+
+```
+🫥🫥🫥🫥🫥🫥
+🫥🔘🫥🫥🔘🫥
+🔘🫥🫥🫥🫥🔘
+🫥🫥🫥🫥🫥🫥
+🫥🔘🫥🫥🔘🫥
+🫥🫥🔘🫥🫥🫥
+```
+
+<details>
+  <summary>Solution</summary>
+
+  ```
+  🟫🟨🟨🟨🟪🟪
+  🟫🔘🟨⬜️🔘🟪
+  🔘🟩🟩⬜️🟥🔘
+  🟦🟩🟩⬜️🟥🟥
+  🟦🔘⬛️⬜️🔘🟥
+  🟦🟦🔘🟧🟧🟧
+  ```
+
+</details>
+
+
+And here is an [overview of all 800 puzzles](https://github.com/CatchemAL/genius-square/blob/main/data/Genius%20Square%20-%20Insanely%20Hard%20Mode.pdf) with only one solution. Answers at the bottom.
+
+### Stats for nerds
+- Number of unsolvable configurations: 172,440
+- Number of solutions with:
+  - 1 solution: 800
+  - 2 solutions: 1,324
+  - 3 solutions: 1,328
+  - ...
+  - 100,593 solutions: 16
+- Median number of solutions: 719
+
+
+<details>
+  <summary>The easiest configuration conceivable</summary>
+  This has 100,593 solutions. Can you find one? I believe in you. You can do anything if you put your mind to it.
+
+  ```
+  🔘🔘🔘🔘🔘🔘
+  🔘🫥🫥🫥🫥🫥
+  🫥🫥🫥🫥🫥🫥
+  🫥🫥🫥🫥🫥🫥
+  🫥🫥🫥🫥🫥🫥
+  🫥🫥🫥🫥🫥🫥
+  ```
+
+</details>
